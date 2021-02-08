@@ -2,18 +2,16 @@ part of 'todo_bloc.dart';
 
 @immutable
 abstract class TodoState extends Equatable {
-  
   const TodoState();
 
-  @override 
+  @override
   List<Object> get props => [];
 }
 
-class TodoLoadInProgress extends TodoState{}
+class TodoLoadInProgress extends TodoState {}
 
-class TodoLoadSuccess extends  TodoState{
-
-  final List<TodoModel> todos;
+class TodoLoadSuccess extends TodoState {
+  final Stream<List<TodoEntity>> todos;
 
   TodoLoadSuccess(this.todos);
 
@@ -24,8 +22,6 @@ class TodoLoadSuccess extends  TodoState{
   String toString() => 'TodoLoadSuccess { todos: $todos }';
 }
 
-class TodoInitial extends TodoState {
-  
-}
+class TodoInitial extends TodoState {}
 
 class TodosLoadFailure extends TodoState {}
