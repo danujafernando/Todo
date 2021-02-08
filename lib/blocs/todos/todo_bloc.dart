@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Todo/entities/todo_entity.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -27,18 +28,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   Stream<TodoState> _mapLoadTodoToState() async* {
+    List<TodoEntity> todoList;
     try {
       var todos = _todoRepository.todos();
-      
-      /*
-      List<TodoModel> _allTodos = [];
-      todos.forEach((todo) {
-        todo.forEach((td){
-          _allTodos.add(TodoModel.fromEntity(td));
-        });
-      });
-      */
-      //yield TodoLoadSuccess(_allTodos);
+      //
+      // todos.listen((event) {
+      //   todoList = event;
+      // });
+
+      yield TodoLoadSuccess(todos);
     } catch (_) {
       yield TodosLoadFailure();
     }

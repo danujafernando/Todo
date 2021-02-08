@@ -1,3 +1,4 @@
+import 'package:Todo/entities/todo_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,7 @@ import '../models/todo_model.dart';
 import '../colors.dart';
 
 class TodoItemWidget extends StatelessWidget {
-  TodoModel todo;
+  TodoEntity todo;
   final VoidCallback onRemove;
   final VoidCallback onNotify;
 
@@ -28,7 +29,7 @@ class TodoItemWidget extends StatelessWidget {
     return Dismissible(
       key: Key(todo.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction) => { onRemove() },
+      onDismissed: (direction) => {onRemove()},
       background: Container(
         padding: EdgeInsets.only(
           left: 12,
@@ -103,7 +104,7 @@ class TodoItemWidget extends StatelessWidget {
             Positioned(
               right: 0,
               child: GestureDetector(
-                onTap: () => { onNotify() },
+                onTap: () => {onNotify()},
                 child: Icon(
                   Icons.notifications,
                   size: 18,
@@ -163,7 +164,7 @@ class TodoItemWidget extends StatelessWidget {
           fontSize: 14,
           decoration:
               (!isBefore) ? TextDecoration.none : TextDecoration.lineThrough,
-          decorationThickness: 3,    
+          decorationThickness: 3,
         ),
       ),
     );

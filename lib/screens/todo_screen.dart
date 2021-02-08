@@ -1,4 +1,5 @@
 import 'package:Todo/blocs/todos/todo_bloc.dart';
+import 'package:Todo/entities/todo_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,8 @@ class TodoScreen extends StatefulWidget {
 class _TodoScreenState extends State<TodoScreen> {
   List todayTodoItems;
   List tomorrowTodoItems;
-   
+  List<TodoEntity> todos;
+
   initState() {
     super.initState();
     var now = new DateTime.now();
@@ -43,10 +45,9 @@ class _TodoScreenState extends State<TodoScreen> {
     });
   }
 
-  void onNotifyTodoItem(int index, int group){
-    setState((){
+  void onNotifyTodoItem(int index, int group) {
+    setState(() {
       if (group == 1) {
-        
         todayTodoItems[index].notify = !todayTodoItems[index].notify;
       }
       if (group == 2) {
@@ -54,6 +55,7 @@ class _TodoScreenState extends State<TodoScreen> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -61,39 +63,47 @@ class _TodoScreenState extends State<TodoScreen> {
     );
   }
 
-  Widget addBloc(){
-    return BlocBuilder<TodoBloc, TodoState>(
-      builder: (BuildContext context, TodoState state) {
-        if (state is TodoLoadInProgress) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (state is TodosLoadFailure) {
-          return Center(
-            child: Text('failed to fetch posts'),
-          );
-        }
+  Widget addBloc() {
+    return BlocListener<TodoBloc, TodoState>(
+      listener: (BuildContext context, TodoState state) {
         if (state is TodoLoadSuccess) {
-          print(state.todos);
-          if (state.todos.isEmpty) {
+          //print(state.todos);
+
+          setState(() {
+            state.todos.first.then((value) => todos = value);
+          });
+        }
+      },
+      child: BlocBuilder<TodoBloc, TodoState>(
+        builder: (BuildContext context, TodoState state) {
+          // if (state is TodoLoadInProgress) {
+          //   return Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
+          // if (state is TodosLoadFailure) {
+          //   return Center(
+          //     child: Text('failed to fetch posts'),
+          //   );
+          // }
+          // else {
+          //   print(state);
+          //   return Center(child: Text("Hello"));
+          // }
+
+          if (todos == null || todos.isEmpty) {
             return EmptyWidget();
-          }else{
-            print(state.todos);
+          } else {
+            print(todos);
             return TodoWidget(
-              todayTodoItems: state.todos,
+              todayTodoItems: todos,
               tomorrowTodoItems: tomorrowTodoItems,
               removeTodoItem: onRemoveTodoItem,
               notifyTodoItem: onNotifyTodoItem,
             );
           }
-        }else{
-          print(state);
-          return Center(
-            child: Text("Hello")
-          );
-        }
-      },
+        },
+      ),
     );
   }
 }
