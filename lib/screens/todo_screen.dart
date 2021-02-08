@@ -1,8 +1,10 @@
+import 'package:Todo/blocs/todos/todo_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../widgets/TodoWidget.dart';
-import '../widgets/EmptyWidget.dart';
+import '../widgets/todo_widget.dart';
+import '../widgets/empty_widget.dart';
 import '../dummy_data.dart';
 
 class TodoScreen extends StatefulWidget {
@@ -13,7 +15,7 @@ class TodoScreen extends StatefulWidget {
 class _TodoScreenState extends State<TodoScreen> {
   List todayTodoItems;
   List tomorrowTodoItems;
-
+   
   initState() {
     super.initState();
     var now = new DateTime.now();
@@ -30,7 +32,7 @@ class _TodoScreenState extends State<TodoScreen> {
     );
   }
 
-  void removeTodoItem(int index, int group) {
+  void onRemoveTodoItem(int index, int group) {
     setState(() {
       if (group == 1) {
         todayTodoItems.removeAt(index);
@@ -41,7 +43,7 @@ class _TodoScreenState extends State<TodoScreen> {
     });
   }
 
-  void notifyTodoItem(int index, int group){
+  void onNotifyTodoItem(int index, int group){
     setState((){
       if (group == 1) {
         
@@ -55,14 +57,43 @@ class _TodoScreenState extends State<TodoScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: (todayTodoItems.length + tomorrowTodoItems.length > 0)
-          ? TodoWidget(
-              todayTodoItems: todayTodoItems,
+      child: addBloc(),
+    );
+  }
+
+  Widget addBloc(){
+    return BlocBuilder<TodoBloc, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        if (state is TodoLoadInProgress) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (state is TodosLoadFailure) {
+          return Center(
+            child: Text('failed to fetch posts'),
+          );
+        }
+        if (state is TodoLoadSuccess) {
+          print(state.todos);
+          if (state.todos.isEmpty) {
+            return EmptyWidget();
+          }else{
+            print(state.todos);
+            return TodoWidget(
+              todayTodoItems: state.todos,
               tomorrowTodoItems: tomorrowTodoItems,
-              removeTodoItem: removeTodoItem,
-              notifyTodoItem: notifyTodoItem,
-            )
-          : EmptyWidget(),
+              removeTodoItem: onRemoveTodoItem,
+              notifyTodoItem: onNotifyTodoItem,
+            );
+          }
+        }else{
+          print(state);
+          return Center(
+            child: Text("Hello")
+          );
+        }
+      },
     );
   }
 }

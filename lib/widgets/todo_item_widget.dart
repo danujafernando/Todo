@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../dummy_data.dart';
-import '../models/Todo.dart';
+import '../models/todo_model.dart';
 
 import '../colors.dart';
 
 class TodoItemWidget extends StatelessWidget {
-  Todo todo;
+  TodoModel todo;
   final VoidCallback onRemove;
   final VoidCallback onNotify;
 

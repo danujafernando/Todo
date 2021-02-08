@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/HeaderWidget.dart';
+import '../widgets/header_widget.dart';
 
 import '../colors.dart';
 

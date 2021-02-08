@@ -1,77 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 
-import '../widgets/HeaderWidget.dart';
+import './category_screen.dart';
+import './todo_screen.dart';
+
+import '../widgets/todo_add_widget.dart';
 
 import '../colors.dart';
 
-class EmptyScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _EmptyScreenState createState() => new _EmptyScreenState();
+  _HomeScreenState createState() => new _HomeScreenState();
 }
 
-class _EmptyScreenState extends State<EmptyScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  Animation animation;
+  AnimationController animationController;
 
   int _selectedIndex = 0;
-  
+  final List<Widget> viewContainer = [
+    TodoScreen(),
+    CategoryScreen(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = 0;
+    animationController =
+        AnimationController(duration: Duration(seconds: 2), vsync: this);
+    animation = Tween(begin: -1.0, end: 0.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn),
+    );
+
+    animationController.forward();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  void _showTodoAddModel(context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: BARRIER_COLOR,
+      isDismissible: false,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: TodoAddWidget(),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: BG_COLOR,
-      body: Container(
-        width: double.infinity,
-        height: size.height,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            HeaderWidget(),
-            Positioned(
-              top: 257,
-              width: 120,
-              height: 160,
-              child: Image.asset(
-                'assets/images/empty.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned(
-              top: 492,
-              child: Text(
-                'No tasks',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Rubik',
-                  color: SPLASH_TITLE_COLOR,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 529,
-              width: 285,
-              child: Text(
-                'You have no task to do.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: SPLASH_TEXT_COLOR,
-                  fontSize: 17,
-                  fontFamily: 'OpenSans',
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: viewContainer[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
+          _showTodoAddModel(context);
         },
         child: Container(
           width: 60,

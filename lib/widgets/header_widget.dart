@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../art_works/TopLeftCircle.dart';
-import '../art_works/TopRightCircle.dart';
+import '../art_works/top_left_circle.dart';
+import '../art_works/top_right_circle.dart';
 import '../colors.dart';
 
 class HeaderWidget extends StatelessWidget {

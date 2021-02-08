@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import './HeaderWidget.dart';
-import './TodoItemWidget.dart';
-import './GroupNameWiget.dart';
+import './header_widget.dart';
+import './todo_item_widget.dart';
+import './group_name_widget.dart';
 
 
 class TodoWidget extends StatefulWidget {

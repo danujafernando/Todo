@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/GroupNameWiget.dart';
-import '../widgets/HeaderWidget.dart';
+import '../widgets/group_name_widget.dart';
+import '../widgets/header_widget.dart';
 
-import '../models/Category.dart';
+import '../models/category_model.dart';
 
 import '../colors.dart';
 import '../dummy_data.dart';
@@ -11,7 +11,7 @@ import '../dummy_data.dart';
 class CategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Category> categories = List.from(CategoryList);
+    List<CategoryModel> categories = List.from(CategoryList);
     var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Column(
