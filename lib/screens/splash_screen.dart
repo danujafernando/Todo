@@ -1,3 +1,4 @@
+import 'package:Todo/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../colors.dart';
@@ -53,7 +54,14 @@ class SplashScreen extends StatelessWidget {
                 width: 258,
                 height: 56,
                 child: InkWell(
-                  onTap: () => {},
+                  onTap: () => {
+                    Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        )
+                  },
                   child: Container(
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(

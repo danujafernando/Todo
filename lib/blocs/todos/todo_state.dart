@@ -8,20 +8,20 @@ abstract class TodoState extends Equatable {
   List<Object> get props => [];
 }
 
-class TodoLoadInProgress extends TodoState {}
+class TodoLoading extends TodoState {}
 
-class TodoLoadSuccess extends TodoState {
-  final Stream<List<TodoEntity>> todos;
+class TodoLoaded extends TodoState {
+  final List<TodoModel> todos;
 
-  TodoLoadSuccess(this.todos);
+  TodoLoaded([this.todos = const []]);
 
   @override
   List<Object> get props => [todos];
 
   @override
-  String toString() => 'TodoLoadSuccess { todos: $todos }';
+  String toString() => 'TodoLoaded { todos: $todos }';
 }
 
 class TodoInitial extends TodoState {}
 
-class TodosLoadFailure extends TodoState {}
+class TodoNotLoaded extends TodoState {}

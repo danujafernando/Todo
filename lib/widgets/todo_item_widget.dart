@@ -1,4 +1,3 @@
-import 'package:Todo/entities/todo_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +8,7 @@ import '../models/todo_model.dart';
 import '../colors.dart';
 
 class TodoItemWidget extends StatelessWidget {
-  TodoEntity todo;
+  TodoModel todo;
   final VoidCallback onRemove;
   final VoidCallback onNotify;
 
@@ -89,7 +88,7 @@ class TodoItemWidget extends StatelessWidget {
           border: Border(
             left: BorderSide(
               color:
-                  CategoryList.firstWhere((item) => item.id == todo.category_id)
+                  CategoryList.firstWhere((item) => item.id == todo.categoryId)
                       .darkColor,
               width: 5,
             ),

@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import './screens/splash_screen.dart';
 import './screens/home_screen.dart';
 import 'blocs/todos/todo_bloc.dart';
 import 'reposotories/todo_repository.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(
-    BlocProvider(
-      create: (context) {
-        return TodoBloc(
-              todoRepository: TodoRepository(),
-          )..add(LoadTodos());
-      },
-      child:  MyTodoApp()
-    ),
-   );
+  runApp(MyTodoApp());
 }
 
 class MyTodoApp extends StatefulWidget {
@@ -53,11 +44,18 @@ class _MyTodoApp extends State<MyTodoApp> with SingleTickerProviderStateMixin {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AnimatedBuilder(
-        animation: animationController,
-        builder: (BuildContext context, Widget child) {
-          return HomeScreen();
+      home: BlocProvider(
+        create: (context) {
+          return TodoBloc(
+            todoRepository: TodoRepository(),
+          )..add(LoadTodos());
         },
+        child: AnimatedBuilder(
+          animation: animationController,
+          builder: (BuildContext context, Widget child) {
+            return HomeScreen();
+          },
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import '../models/todo_model.dart';
 import '../entities/todo_entity.dart';
@@ -18,9 +19,13 @@ class TodoRepository implements BasedTodoRepository {
   }
 
   @override
-  Stream<List<TodoEntity>> todos() {
-    return todoCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => TodoEntity.fromSnapshot(doc)).toList();
+  Stream<List<TodoModel>> todos() {
+    var now = new DateTime.now();
+    var parseDate = now.add(new Duration(days: 2));
+    var today = new DateTime(now.year, now.month, now.day);
+    var tomorrow = new DateTime(parseDate.year, parseDate.month, parseDate.day);
+    return todoCollection.where("datetime", isGreaterThanOrEqualTo: today).where("datetime", isLessThanOrEqualTo: tomorrow).orderBy('datetime').snapshots().map((snapshot){
+      return snapshot.docs.map((doc) => TodoModel.fromEntity(TodoEntity.fromSnapshot(doc))).toList();
     });
   }
 
@@ -31,11 +36,12 @@ class TodoRepository implements BasedTodoRepository {
 }
 
 abstract class BasedTodoRepository {
+
   Future<void> addNewTodo(TodoModel todo);
 
   Future<void> deleteTodo(TodoModel todo);
 
-  Stream<List<TodoEntity>> todos();
+  Stream<List<TodoModel>> todos();
 
   Future<void> updateTodo(TodoModel todo);
 }

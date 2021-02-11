@@ -6,7 +6,7 @@ class TodoEntity extends Equatable{
 
   final String id;
   final String title;
-  final String category_id;
+  final String categoryId;
   final DateTime datetime;
   String note;
   bool notify;
@@ -14,7 +14,7 @@ class TodoEntity extends Equatable{
   TodoEntity({
     @required this.id,
     @required this.title,
-    @required this.category_id,
+    @required this.categoryId,
     @required this.datetime,
     this.note,
     this.notify = false,
@@ -25,7 +25,7 @@ class TodoEntity extends Equatable{
       'id': id,
       'title': title,
       'note': note,
-      'category_id': category_id,
+      'categoryId': categoryId,
       'datetime': datetime,
       'notify': notify
     };
@@ -36,23 +36,12 @@ class TodoEntity extends Equatable{
     return 'TodoEntity { datetime: $datetime, title: $title, note: $note, id: $id }';
   }
 
-  static TodoEntity fromJson(Map<String, Object> json) {
-    return TodoEntity(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      note: json['note'] as String,
-      category_id: json['category_id'] as String,
-      datetime: json['datetime'] as DateTime,
-      notify: json['notify'] as bool,
-    );
-  }
-
   static TodoEntity fromSnapshot(DocumentSnapshot snap) {
     return TodoEntity(
       id: snap.id,
       title: snap.get('title'),
       note: snap.get('note'),
-      category_id: snap.get('category_id'),
+      categoryId: snap.get('categoryId'),
       datetime: snap.get('datetime').toDate(),
       notify: snap.get('notify'),
     );
@@ -63,7 +52,7 @@ class TodoEntity extends Equatable{
       'id': id,
       'title': title,
       'note': note,
-      'category_id': category_id,
+      'categoryId': categoryId,
       'datetime': datetime,
       'notify': notify,  
     };

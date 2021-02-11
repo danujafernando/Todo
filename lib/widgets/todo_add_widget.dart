@@ -1,8 +1,11 @@
 import 'package:Todo/blocs/blocs.dart';
 import 'package:Todo/models/todo_model.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 import '../models/category_model.dart';
 
@@ -16,10 +19,13 @@ class TodoAddWidget extends StatefulWidget {
 
 class _TodoAddWidget extends State<TodoAddWidget> {
   TextEditingController _titleEditingController = TextEditingController();
+  TextEditingController _noteEditingController = TextEditingController();
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+  DateTime selectedDate;
   List<CategoryModel> categories = List.from(CategoryList);
   FocusNode _focusNode = FocusNode();
   int _selectedIndex;
-  String category_id;
+  String categoryId;
 
   @override
   void initState() {
@@ -40,18 +46,41 @@ class _TodoAddWidget extends State<TodoAddWidget> {
   }
 
   void onSave() {
-    var title = _titleEditingController.text;
-    TodoModel todo = TodoModel(
-      id: 't2',
-      title: title,
-      note: null,
-      category_id: category_id,
-      datetime: new DateTime(2021, 2, 8, 17),
-      notify: false,
-    );
-
-    final todoBloc = BlocProvider.of<TodoBloc>(context);
-    todoBloc.add(TodoAdded(todo));
+    try {
+      var title = _titleEditingController.text;
+      var note = _noteEditingController.text;
+      if (title == null || title == '' || categoryId == null || selectedDate == null) {
+        var errorMessage = "";
+        if(title == null || title == ''){
+          errorMessage += "Title is missing \n";
+        }
+        if(categoryId == null){
+          errorMessage += "Category is missing \n";
+        }
+        if(selectedDate == null){
+          errorMessage += "Date & time is missing";
+        }
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          text: errorMessage,
+        );
+      } else {
+        TodoModel todo = TodoModel(
+          id: 't2',
+          title: title,
+          note: note,
+          categoryId: categoryId,
+          datetime: selectedDate,
+          notify: false,
+        );
+        final todoBloc = BlocProvider.of<TodoBloc>(context);
+        todoBloc.add(TodoAdd(todo));
+        Navigator.pop(context);
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -71,11 +100,12 @@ class _TodoAddWidget extends State<TodoAddWidget> {
               clipper: ClipPainter(),
               child: Container(
                 color: Colors.white,
-                child: Stack(
-                  alignment: Alignment.topCenter,
+                child: Column(
                   children: [
-                    Positioned(
-                      top: 60,
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 60,
+                      ),
                       child: Text(
                         'Add new task',
                         style: TextStyle(
@@ -86,22 +116,11 @@ class _TodoAddWidget extends State<TodoAddWidget> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 95,
-                      left: 10,
-                      right: 10,
-                      child: titleEditorInput(size),
-                    ),
-                    Positioned(
-                      top: 150,
-                      left: 10,
-                      right: 10,
-                      child: categoryList(),
-                    ),
-                    Positioned(
-                      top: 250,
-                      left: 10,
-                      right: 10,
+                    titleEditorInput(size),
+                    noteEditorInput(size),
+                    categoryList(),
+                    dateTimeInput(size),
+                    Container(
                       child: FlatButton(
                         onPressed: () => {onSave()},
                         padding: const EdgeInsets.all(0.0),
@@ -109,10 +128,7 @@ class _TodoAddWidget extends State<TodoAddWidget> {
                           alignment: Alignment.center,
                           width: size.width - 20,
                           height: 53,
-                          margin: EdgeInsets.only(
-                            left: 25,
-                            right: 25,
-                          ),
+                          margin: EdgeInsets.only(left: 25, right: 25, top: 25),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             gradient: LinearGradient(
@@ -192,7 +208,7 @@ class _TodoAddWidget extends State<TodoAddWidget> {
               setState(() {
                 if (selected) {
                   _selectedIndex = index;
-                  category_id = categories[index].id;
+                  categoryId = categories[index].id;
                 }
               });
             },
@@ -223,6 +239,114 @@ class _TodoAddWidget extends State<TodoAddWidget> {
         ),
         decoration: InputDecoration(
           hintText: "Title",
+          hintStyle: TextStyle(
+            fontSize: 20,
+            color: Color.fromRGBO(161, 161, 161, 1),
+            fontFamily: 'Rubik',
+            fontWeight: FontWeight.w300,
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              width: 3,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              style: BorderStyle.solid,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              width: 3,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              style: BorderStyle.solid,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget noteEditorInput(size) {
+    return Container(
+      width: size.width - 20,
+      margin: EdgeInsets.only(
+        left: 25,
+        right: 25,
+      ),
+      child: TextFormField(
+        autofocus: true,
+        obscureText: false,
+        keyboardType: TextInputType.multiline,
+        controller: _noteEditingController,
+        focusNode: _focusNode,
+        maxLength: null,
+        maxLines: 5,
+        style: TextStyle(
+          fontSize: 20,
+          color: Color.fromRGBO(161, 161, 161, 1),
+          fontFamily: 'Rubik',
+          fontWeight: FontWeight.w300,
+        ),
+        decoration: InputDecoration(
+          hintText: "Note",
+          hintStyle: TextStyle(
+            fontSize: 20,
+            color: Color.fromRGBO(161, 161, 161, 1),
+            fontFamily: 'Rubik',
+            fontWeight: FontWeight.w300,
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              width: 3,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              style: BorderStyle.solid,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              width: 3,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              style: BorderStyle.solid,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget dateTimeInput(size) {
+    return Container(
+      width: size.width - 20,
+      margin: EdgeInsets.only(
+        left: 25,
+        right: 25,
+      ),
+      child: DateTimeField(
+        format: format,
+        initialValue: selectedDate,
+        onShowPicker: (context, currentValue) async {
+          final date = await showDatePicker(
+              context: context,
+              firstDate: DateTime.now(),
+              initialDate: currentValue ?? DateTime.now(),
+              lastDate: DateTime(2100));
+          if (date != null) {
+            final time = await showTimePicker(
+              context: context,
+              initialTime:
+                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+            );
+            setState(() {
+              selectedDate = DateTimeField.combine(date, time);
+            });
+            return DateTimeField.combine(date, time);
+          } else {
+            setState(() {
+              selectedDate = currentValue;
+            });
+            return currentValue;
+          }
+        },
+        decoration: InputDecoration(
+          hintText: "Date & Time",
           hintStyle: TextStyle(
             fontSize: 20,
             color: Color.fromRGBO(161, 161, 161, 1),

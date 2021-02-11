@@ -35,6 +35,9 @@ dependencies:
   equatable: ^1.2.5
   firebase_core: ^0.7.0
   cloud_firestore: ^0.16.0
+  rxdart: ^0.25.0
+  datetime_picker_formfield: ^1.0.0
+  cool_alert: ^1.0.3
 
 dev_dependencies:
   flutter_test:

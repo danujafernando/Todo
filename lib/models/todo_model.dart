@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meta/meta.dart';
 
 import '../entities/todo_entity.dart';
 
 class TodoModel extends Equatable {
   final String id;
   final String title;
-  final String category_id;
+  final String categoryId;
   final DateTime datetime;
   String note;
   bool notify;
@@ -15,7 +16,7 @@ class TodoModel extends Equatable {
   TodoModel({
     @required this.id,
     @required this.title,
-    @required this.category_id,
+    @required this.categoryId,
     @required this.datetime,
     this.note,
     this.notify = false,
@@ -30,17 +31,27 @@ class TodoModel extends Equatable {
       'title': title,
       'note': note,
       'datetime': datetime,
-      'category_id': category_id,
+      'categoryId': categoryId,
       'notify': notify
     };
   }
 
+  TodoModel copyWith({bool notify, String id, String note, String task, String categoryId}) {
+    return TodoModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      note: note ?? this.note ?? this.note,
+      datetime: datetime ?? this.datetime,
+      categoryId: categoryId ?? this.categoryId,
+      notify: notify ?? this.notify
+    );
+  }
   TodoEntity toEntity() {
     return TodoEntity(
       id: id,
       title: title,
       note: note,
-      category_id: category_id,
+      categoryId: categoryId,
       datetime: datetime,
       notify: notify
     );
@@ -51,7 +62,7 @@ class TodoModel extends Equatable {
       id: todo.id,
       title: todo.title,
       note: todo.note ?? null,
-      category_id: todo.category_id,
+      categoryId: todo.categoryId,
       datetime: todo.datetime,
       notify: todo.notify ?? false,
     );
@@ -62,7 +73,7 @@ class TodoModel extends Equatable {
       id: snap.id,
       title: snap.get('title'),
       note: snap.get('note'),
-      category_id: snap.get('category_id'),
+      categoryId: snap.get('categoryId'),
       datetime: snap.get('datetime').toDate(),
       notify: snap.get('notify'),
     );
