@@ -13,7 +13,7 @@ class TodoLoading extends TodoState {}
 class TodoLoaded extends TodoState {
   final List<TodoModel> todos;
 
-  TodoLoaded([this.todos = const []]);
+  TodoLoaded([this.todos = const []]) : super();
 
   @override
   List<Object> get props => [todos];

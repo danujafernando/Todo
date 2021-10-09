@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:Todo/blocs/todos/todo_bloc.dart';
 
 import '../dummy_data.dart';
 import '../models/todo_model.dart';
@@ -10,21 +12,19 @@ import '../colors.dart';
 class TodoItemWidget extends StatelessWidget {
   TodoModel todo;
   final VoidCallback onRemove;
-  final VoidCallback onNotify;
 
   TodoItemWidget({
     Key key,
     @required this.todo,
     @required this.onRemove,
-    @required this.onNotify,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return todoDismissible();
+    return todoDismissible(context);
   }
 
-  Widget todoDismissible() {
+  Widget todoDismissible(context) {
     return Dismissible(
       key: Key(todo.id),
       direction: DismissDirection.endToStart,
@@ -56,11 +56,11 @@ class TodoItemWidget extends StatelessWidget {
           ),
         ),
       ),
-      child: todoItemCard(),
+      child: todoItemCard(context),
     );
   }
 
-  Widget todoItemCard() {
+  Widget todoItemCard(context) {
     return Card(
       margin: const EdgeInsets.only(
         left: 0.0,
@@ -68,11 +68,11 @@ class TodoItemWidget extends StatelessWidget {
         bottom: 18.0,
       ),
       elevation: 2,
-      child: todoContainer(),
+      child: todoContainer(context),
     );
   }
 
-  Widget todoContainer() {
+  Widget todoContainer(context) {
     var now = new DateTime.now();
     var todoDateTime = todo.datetime;
     bool isBefore = todoDateTime.isBefore(now);
@@ -97,13 +97,19 @@ class TodoItemWidget extends StatelessWidget {
         child: Stack(
           alignment: Alignment.centerLeft,
           children: [
-            toTodoCompleted(isBefore),
+            toTodoCompleted(todo.expire),
             toTodoTime(),
-            toTodoTitle(isBefore),
+            toTodoTitle(todo.expire),
             Positioned(
               right: 0,
               child: GestureDetector(
-                onTap: () => {onNotify()},
+                onTap: () => {
+                  BlocProvider.of<TodoBloc>(context).add(
+                    TodoUpdate(
+                      todo.copyWith(notify: !todo.notify),
+                    ),
+                  )
+                },
                 child: Icon(
                   Icons.notifications,
                   size: 18,

@@ -58,3 +58,8 @@ class TodoReceived extends TodoEvent{
   @override
   List<Object> get props => [todo];
 }
+
+class GetAllTodos extends TodoEvent {
+  @override
+  List<Object> get props => [];
+}

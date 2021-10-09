@@ -2,24 +2,41 @@ import 'package:flutter/material.dart';
 
 import '../widgets/group_name_widget.dart';
 import '../widgets/header_widget.dart';
-
 import '../models/category_model.dart';
 
+import '../reposotories/todo_repository.dart';
 import '../colors.dart';
 import '../dummy_data.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends StatefulWidget {
+  @override
+  _CategoryScreenState createState() => new _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  List<CategoryModel> categories = List.from(CategoryList);
+  initState() {
+    super.initState();
+    todoCounts();
+  }
+
+  Future<void> todoCounts() async {
+    for (int i = 0; i < categories.length; i++) {
+      var j = await TodoRepository().todoCount(categories[i].id);
+      setState((){
+          categories[i].todoCount = j;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<CategoryModel> categories = List.from(CategoryList);
     var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeaderWidget(
-            height: 238,
-          ),
+          HeaderWidget(),
           SizedBox(
             height: 12,
           ),
@@ -27,11 +44,7 @@ class CategoryScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             height: size.height,
-            margin: new EdgeInsets.only(
-              left: 18.0,
-              right: 18.0,
-              top: 18.0
-            ),
+            margin: new EdgeInsets.only(left: 18.0, right: 18.0, top: 18.0),
             child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
@@ -108,17 +121,29 @@ class CategoryScreen extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Text(
-              '23 task',
-              style: TextStyle(
-                color: CATEGORY_ITEM_SUBTITLE_COLOR,
-                fontSize: 10,
-                fontFamily: 'Rubik',
-                fontWeight: FontWeight.w300,
-              ),
-            ),
+            todoLength(category.todoCount)
           ],
         ),
+      ),
+    );
+  }
+
+  Widget todoLength(todoCount) {
+    String text;
+    if(todoCount == 0){
+      text = "No todos";
+    }else if(todoCount == 1){
+      text = "1 todo";
+    }else{
+      text = "$todoCount todos";
+    }
+    return Text(
+      text,
+      style: TextStyle(
+        color: CATEGORY_ITEM_SUBTITLE_COLOR,
+        fontSize: 10,
+        fontFamily: 'Rubik',
+        fontWeight: FontWeight.w300,
       ),
     );
   }

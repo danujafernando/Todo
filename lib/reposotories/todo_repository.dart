@@ -33,6 +33,21 @@ class TodoRepository implements BasedTodoRepository {
   Future<void> updateTodo(TodoModel todo) {
     return todoCollection.doc(todo.id).update(todo.toEntity().toDocument());
   }
+
+  @override
+  Future<int> todoCount(String categoryId) async{
+    var now = new DateTime.now();
+    var itemCount = 0;
+    await todoCollection.where("datetime", isGreaterThanOrEqualTo: now).get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+            if(doc.data()['categoryId'] == categoryId){
+              itemCount++;
+            }
+        })
+    });
+    return itemCount;
+  }
+
 }
 
 abstract class BasedTodoRepository {
@@ -44,4 +59,6 @@ abstract class BasedTodoRepository {
   Stream<List<TodoModel>> todos();
 
   Future<void> updateTodo(TodoModel todo);
+
+  Future<int> todoCount(String categoryId);
 }

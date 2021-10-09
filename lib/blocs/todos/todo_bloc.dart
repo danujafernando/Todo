@@ -15,11 +15,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   TodoBloc({@required TodoRepository todoRepository})
       : assert(todoRepository != null),
-        _todoRepository = todoRepository, super(null);
+        _todoRepository = todoRepository,
+        super(TodoLoading());
 
   @override
   TodoState get initialState => TodoLoading();
-  
+
   @override
   Stream<TodoState> mapEventToState(TodoEvent event) async* {
     if (event is LoadTodos) {
@@ -32,12 +33,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       yield* _mapDeleteTodoToState(event);
     } else if (event is TodoReceived) {
       yield* _mapTodoUpdateToState(event);
-    } 
+    }
   }
 
   Stream<TodoState> _mapLoadTodoToState() async* {
-    _todosSubscription?.cancel();
-    _todosSubscription = _todoRepository.todos().listen((todos) => add(TodoReceived(todos)),);
+    _todosSubscription = _todoRepository.todos().listen(
+          (todos) => add(
+            TodoReceived(todos),
+          ),
+        );
   }
 
   Stream<TodoState> _mapAddTodoToState(TodoAdd event) async* {

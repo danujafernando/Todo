@@ -2,7 +2,6 @@ import 'package:Todo/blocs/blocs.dart';
 import 'package:Todo/models/todo_model.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -23,19 +22,12 @@ class _TodoAddWidget extends State<TodoAddWidget> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   DateTime selectedDate;
   List<CategoryModel> categories = List.from(CategoryList);
-  FocusNode _focusNode = FocusNode();
   int _selectedIndex;
   String categoryId;
 
   @override
   void initState() {
     super.initState();
-
-    _focusNode.addListener(() {
-      if (!_focusNode.hasFocus) {
-        FocusScope.of(context).requestFocus(_focusNode);
-      }
-    });
   }
 
   @override
@@ -73,9 +65,9 @@ class _TodoAddWidget extends State<TodoAddWidget> {
           categoryId: categoryId,
           datetime: selectedDate,
           notify: false,
+          expire: false
         );
-        final todoBloc = BlocProvider.of<TodoBloc>(context);
-        todoBloc.add(TodoAdd(todo));
+        BlocProvider.of<TodoBloc>(context).add(TodoAdd(todo));
         Navigator.pop(context);
       }
     } catch (error) {
@@ -226,11 +218,10 @@ class _TodoAddWidget extends State<TodoAddWidget> {
         right: 25,
       ),
       child: TextFormField(
-        autofocus: true,
+        autofocus: false,
         obscureText: false,
         keyboardType: TextInputType.text,
         controller: _titleEditingController,
-        focusNode: _focusNode,
         style: TextStyle(
           fontSize: 20,
           color: Color.fromRGBO(161, 161, 161, 1),
@@ -272,11 +263,9 @@ class _TodoAddWidget extends State<TodoAddWidget> {
         right: 25,
       ),
       child: TextFormField(
-        autofocus: true,
         obscureText: false,
         keyboardType: TextInputType.multiline,
         controller: _noteEditingController,
-        focusNode: _focusNode,
         maxLength: null,
         maxLines: 5,
         style: TextStyle(

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class TodoEntity extends Equatable{
 
@@ -10,6 +11,7 @@ class TodoEntity extends Equatable{
   final DateTime datetime;
   String note;
   bool notify;
+  bool expire;
 
   TodoEntity({
     @required this.id,
@@ -18,6 +20,7 @@ class TodoEntity extends Equatable{
     @required this.datetime,
     this.note,
     this.notify = false,
+    this.expire = false
   });
   
   Map<String, Object> toJson() {
@@ -27,7 +30,8 @@ class TodoEntity extends Equatable{
       'note': note,
       'categoryId': categoryId,
       'datetime': datetime,
-      'notify': notify
+      'notify': notify,
+      'expire': expire
     };
   }
 
@@ -37,13 +41,15 @@ class TodoEntity extends Equatable{
   }
 
   static TodoEntity fromSnapshot(DocumentSnapshot snap) {
+
     return TodoEntity(
       id: snap.id,
-      title: snap.get('title'),
-      note: snap.get('note'),
-      categoryId: snap.get('categoryId'),
-      datetime: snap.get('datetime').toDate(),
-      notify: snap.get('notify'),
+      title: snap.data()['title'],
+      note: snap.data()['note'],
+      categoryId: snap.data()['categoryId'],
+      datetime: snap.data()['datetime'].toDate(),
+      notify: snap.data()['notify'],
+      expire: snap.data()['expire'],
     );
   }
 
@@ -54,7 +60,8 @@ class TodoEntity extends Equatable{
       'note': note,
       'categoryId': categoryId,
       'datetime': datetime,
-      'notify': notify,  
+      'notify': notify,
+      'expire': expire  
     };
   }
 

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import '../blocs/todos/todo_bloc.dart';
 
+import '../models/todo_model.dart';
 import '../widgets/todo_widget.dart';
 import '../widgets/empty_widget.dart';
-
-import '../models/todo_model.dart';
-
-import '../dummy_data.dart';
 
 class TodoScreen extends StatefulWidget {
   @override
@@ -17,6 +13,9 @@ class TodoScreen extends StatefulWidget {
 }
 
 class _TodoScreenState extends State<TodoScreen> {
+
+  List<TodoModel> todayTodoItems;
+  List<TodoModel> tomorrowTodoItems;
   initState() {
     super.initState();
   }
@@ -24,15 +23,12 @@ class _TodoScreenState extends State<TodoScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: addBloc(),
+      child: setTodoBloc(),
     );
   }
 
-  Widget addBloc() {
-    return BlocConsumer<TodoBloc, TodoState>(
-      listener: (context, state) {
-        print(state);
-      },
+  Widget setTodoBloc() {
+    return BlocBuilder<TodoBloc, TodoState>(      
       builder: (BuildContext context, state) {
         if (state is TodoLoading) {
           return Center(
@@ -51,20 +47,18 @@ class _TodoScreenState extends State<TodoScreen> {
           } else {
             var now = new DateTime.now();
             var parseDate = now.add(new Duration(days: 1));
-            var tomorrow =
-                new DateTime(parseDate.year, parseDate.month, parseDate.day);
-            final todayTodos = todos
-                .where((todo) => todo.datetime.isBefore(tomorrow))
-                .toList();
-            final tomorrowTodos =
-                todos.where((todo) => todo.datetime.isAfter(tomorrow)).toList();
+            var tomorrow = new DateTime(parseDate.year, parseDate.month, parseDate.day);
+            todayTodoItems = todos.where((todo) => todo.datetime.isBefore(tomorrow)).toList();
+            tomorrowTodoItems = todos.where((todo) => todo.datetime.isAfter(tomorrow)).toList();
             return TodoWidget(
-              todayTodoItems: todayTodos,
-              tomorrowTodoItems: tomorrowTodos,
+              todayTodoItems: todayTodoItems,
+              tomorrowTodoItems: tomorrowTodoItems
             );
           }
         } else {
-          return Container();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );
